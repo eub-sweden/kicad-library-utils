@@ -106,6 +106,15 @@ class SymbolCheck:
             if self.no_warnings and not rule.hasErrors():
                 continue
 
+            # A custom symbol field 'klc-exceptions' can be added with a comma 
+            # separated list of rules not to check. This is to allow for 
+            # no errors / no warnings CI/CD of the library 
+            if symbol.get_property('klc-exceptions'):
+                if (rule.name in symbol.get_property('klc-exceptions').value.split(',')):
+                    self.printer.yellow("Skip checking rule {rule} for symbol {sym}".format(
+                        rule=rule.name, sym=symbol.name))
+                    continue
+
             if rule.hasOutput():
                 if first:
                     self.printer.green(
