@@ -103,6 +103,10 @@ def do_rulecheck(module, rules, metrics) -> Tuple[int, int]:
 
     for rule in rules:
         rule = rule(module, args)
+
+        if rule.name in rule.klc_exceptions:
+            continue
+
         if verbosity.value > Verbosity.HIGH.value:
             printer.white("Checking rule " + rule.name)
         rule.check()
