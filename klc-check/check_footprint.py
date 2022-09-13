@@ -101,8 +101,21 @@ def do_rulecheck(module, rules, metrics) -> Tuple[int, int]:
     wc = 0
     first = True
 
+
     for rule in rules:
         rule = rule(module, args)
+
+        # A set of rules not to check can be added by adding a user-defined text field
+        # of the following format:
+        # klc-exceptions=F1.3,F9.2
+        klc_exceptions = [ke['user'] for ke in module.userText if 'klc-exceptions=' in ke['user']]
+        if klc_exceptions:
+            klc_exceptions = klc_exceptions[0].replace('klc-exceptions=', '')
+            klc_exceptions = klc_exceptions.split(',')
+
+        if rule.name in klc_exceptions:
+            continue
+
         if verbosity.value > Verbosity.HIGH.value:
             printer.white("Checking rule " + rule.name)
         rule.check()
