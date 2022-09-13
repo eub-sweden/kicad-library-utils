@@ -97,6 +97,7 @@ class KLCRule(KLCRuleBase):
         self.module: KicadMod = module
         self.args = args
         self.needsFixMore: bool = False
+        self.klc_exceptions = self.klc_exceptions(module)
 
         # Illegal chars
         self.illegal_chars = ["*", "?", ":", "/", "\\", "[", "]", ";", "|", "=", ","]
@@ -107,3 +108,16 @@ class KLCRule(KLCRuleBase):
     def fixmore(self) -> None:
         if self.needsFixMore:
             self.info("fixmore not supported")
+
+    @staticmethod
+    def klc_exceptions(module: KicadMod) -> [str]:
+        # A set of rules not to check can be added by adding a user-defined text field
+        # of the following format:
+        # klc-exceptions=F1.3,F9.2
+        klc_exceptions = [ke['user'] for ke in module.userText if 'klc-exceptions=' in ke['user']]
+        if klc_exceptions:
+            klc_exceptions = klc_exceptions[0].replace('klc-exceptions=', '')
+            klc_exceptions = klc_exceptions.replace(' ', '')
+            klc_exceptions = klc_exceptions.split(',')
+
+        return klc_exceptions
