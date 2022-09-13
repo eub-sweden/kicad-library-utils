@@ -180,6 +180,13 @@ parser.add_argument(
     action="store",
 )
 parser.add_argument(
+    "-i",
+    "--ignore-rules",
+    help="specify rules not to check (comma separated list of rules \"F9.3,F6.2\")",
+    action="store",
+    default=""
+)
+parser.add_argument(
     "--nocolor", help="does not use colors to show the output", action="store_true"
 )
 parser.add_argument(
@@ -232,10 +239,13 @@ if args.rule:
 else:
     selected_rules = None
 
+ignored_rules = args.ignore_rules.split(",")
+
 rules = []
 for rule_name, rule in get_all_footprint_rules().items():
     if selected_rules is None or rule_name in selected_rules:
-        rules.append(rule.Rule)
+        if not rule_name in ignored_rules:
+            rules.append(rule.Rule)
 
 # figure out which files should be checked
 files = []
