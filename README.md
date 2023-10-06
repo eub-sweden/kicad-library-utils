@@ -1,3 +1,20 @@
+# EUB fork changes/additions
+The following changes were made to the `klc-check/check_footprint.py` and `klc-check/check_symbol.py` scripts.
+
+They are used to check if a symbol library or footprint follows the [KiCad Library Convention (KLC)](klc.kicad.org).
+
+## Rule exceptions
+We have added functionality to ignore specific warnings/errors for specific footprints/symbols.
+
+This is done by adding a list of the ignored rules in a custom field.
+
+For symbols, add a new field with the name `klc-exceptions` and list the rules in the value column. The show checkbox should not be checked.
+
+For footprints, add a new field in footprint properties, in the text items column write `klc-exceptions=` and list the rules at the end in the same column. The layer should be User.1 and the show checkbox should not be checked.
+
+The rules should be listed in all upper case with comma as delimiter and no spaces. like this "S4.4,S6.2".
+
+
 # KiCad Library Utils
 
 This repository contains a variety of tools related to the libraries used in [KiCad](https://kicad.org/):
