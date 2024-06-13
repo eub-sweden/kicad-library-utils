@@ -72,6 +72,9 @@ class Rule(KLCRule):
 
             self._check_heatsink_zone_connection(pad)
 
+            if "F6.3.1" in self.klc_exceptions:
+                continue
+
             err = False
 
             # Check that required layers are present
@@ -184,7 +187,7 @@ class Rule(KLCRule):
                 self.errorExtra(e)
 
         if missing_layer_errors:
-            self.warning("Pad(s) potentially missing layers")
+            self.warning("Pad(s) potentially missing layers (F6.3.1)")
             for w in missing_layer_errors:
                 self.warningExtra(w)
 
