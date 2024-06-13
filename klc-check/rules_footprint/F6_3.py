@@ -31,6 +31,9 @@ class Rule(KLCRule):
         error list if found.
         """
 
+        if "F6.3.4" in self.klc_exceptions:
+            return
+
         if self._pad_should_be_rounded(pad) and pad['shape'] == 'rect':
             self.pads_that_should_be_rounded.append(pad)
 
@@ -165,7 +168,7 @@ class Rule(KLCRule):
         if self.pads_that_should_be_rounded:
             err = True
             non_round_pad_numbers = [str(pad["number"]) for pad in self.pads_that_should_be_rounded]
-            self.warning("Rectangular SMD pad")
+            self.warning("Rectangular SMD pad (F6.3.4)")
             self.warningExtra(f"Pads {', '.join(non_round_pad_numbers)} are rectangular. "
                               "If possible, change to rounded-rectangle.")
 
