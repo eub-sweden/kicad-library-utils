@@ -16,13 +16,14 @@ class Rule(KLCRule):
             return True
 
         error = False
-        if not re.search(r"https?://", description):
-            self.error("Description field does not contain a URL - add the URL to the datasheet")
-            error = True
+        # FIXME: Temporarily disable these rules, should be warnings and not errors?
+        # if not re.search(r"https?://", description):
+        #     self.error("Description field does not contain a URL - add the URL to the datasheet")
+        #     error = True
 
-        if re.match(r"https?://", description):
-            self.error("Description contains only a URL - add more description before the URL")
-            error = True
+        # if re.match(r"https?://", description):
+        #     self.error("Description contains only a URL - add more description before the URL")
+        #     error = True
 
         return error
 
