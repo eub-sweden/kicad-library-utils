@@ -80,7 +80,10 @@ class Rule(KLCRule):
                                 if x.endswith(".pretty")
                             ]
 
-                            if fp_dir not in fp_libs:
+                            if not fp_dir.startswith("EUB_"):
+                                # FIXME: Find a way to check if footprint exists in standard library also
+                                pass
+                            elif fp_dir not in fp_libs:
                                 self.error("Specified footprint library does not exist")
                                 self.errorExtra(
                                     "Footprint library '{l}' was not found".format(
