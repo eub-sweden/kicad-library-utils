@@ -277,4 +277,6 @@ if args.fix:
         "Some files were updated - ensure that they still load correctly in KiCad"
     )
 
+error_count = error_count + warning_count
+
 sys.exit(0 if error_count == 0 else -1)
