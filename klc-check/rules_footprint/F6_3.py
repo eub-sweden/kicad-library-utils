@@ -30,6 +30,9 @@ class Rule(KLCRule):
         error list if found.
         """
 
+        if "F6.3.4" in self.klc_exceptions:
+            return
+
         if self._pad_should_be_rounded(pad) and pad["shape"] == "rect":
             self.pads_that_should_be_rounded.append(pad)
 
