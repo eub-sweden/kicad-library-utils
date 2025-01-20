@@ -6,6 +6,7 @@ from dataclasses import dataclass
 import argparse
 import logging
 import pathlib
+import csv
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -53,7 +54,34 @@ def extract_column_indexes(sheet: Worksheet, header_row=1) -> BomColumnIndex:
     return column_indexes
 
 
-def extract_bom_rows(sheet: Worksheet, first_data_row=2) -> [BomRow]:
+def extract_bom_rows(file_path: pathlib.Path) -> [BomRow]:
+    match file_path.suffix.lower():
+        case ".csv":
+            return extract_bom_rows_csv(file_path)
+        case ".xlsx":
+            return extract_bom_rows_xlsx(load_workbook(file_path).active)
+        case _:
+            raise ValueError("Provided file was not .csv or .xlsx")
+
+
+def extract_bom_rows_csv(csv_path: pathlib.Path) -> [BomRow]:
+    with open(csv_path) as csvfile:
+        csv_reader = csv.DictReader(csvfile)
+        csv_reader.fieldnames = [name.lower() for name in csv_reader.fieldnames]
+        bom_rows = []
+        for row in csv_reader:
+            bom_row = BomRow(
+                manufacturer=str(row[BomColumnIndex.MANUFACTURER_STR] or '').strip(),
+                part_number=str(row[BomColumnIndex.PART_NUMBER_STR] or '').strip(),
+                quantity=int(row[BomColumnIndex.QUANTITY_STR2]),
+                references=row[BomColumnIndex.REFERENCES_STR2].replace(',',' ').split(),
+            )
+            bom_rows.append(bom_row)
+
+    return bom_rows
+
+
+def extract_bom_rows_xlsx(sheet: Worksheet, first_data_row=2) -> [BomRow]:
     col_index = extract_column_indexes(sheet)
 
     bom_rows = []
@@ -113,11 +141,8 @@ def longest_strings(boms: [[BomRow]]) -> (int, int):
 
 
 def diff_bom(old_path: pathlib.Path, new_path: pathlib.Path):
-    old_sheet = load_workbook(old_path).active
-    new_sheet = load_workbook(new_path).active
-
-    old_bom = extract_bom_rows(old_sheet)
-    new_bom = extract_bom_rows(new_sheet)
+    old_bom = extract_bom_rows(old_path)
+    new_bom = extract_bom_rows(new_path)
 
     new_rows, quantity_changed_rows, removed_rows = find_bom_row_changes(old_bom, new_bom)
 
