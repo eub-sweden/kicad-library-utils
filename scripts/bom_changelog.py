@@ -14,7 +14,9 @@ class BomColumnIndex:
     MANUFACTURER_STR = "manufacturer"
     PART_NUMBER_STR = "manufacturer part number"
     QUANTITY_STR = "quantity per pcb"
+    QUANTITY_STR2 = "qty"
     REFERENCES_STR = "references"
+    REFERENCES_STR2 = "reference"
 
     manufacturer: int = None
     part_number: int = None
@@ -42,10 +44,10 @@ def extract_column_indexes(sheet: Worksheet, header_row=1) -> BomColumnIndex:
                 case BomColumnIndex.PART_NUMBER_STR:
                     column_indexes.part_number = idx
 
-                case BomColumnIndex.QUANTITY_STR:
+                case BomColumnIndex.QUANTITY_STR | BomColumnIndex.QUANTITY_STR2:
                     column_indexes.quantity = idx
 
-                case BomColumnIndex.REFERENCES_STR:
+                case BomColumnIndex.REFERENCES_STR | BomColumnIndex.REFERENCES_STR2:
                     column_indexes.references = idx
 
     return column_indexes
@@ -60,7 +62,7 @@ def extract_bom_rows(sheet: Worksheet, first_data_row=2) -> [BomRow]:
             manufacturer=str(row[col_index.manufacturer] or ''),
             part_number=str(row[col_index.part_number] or ''),
             quantity=int(row[col_index.quantity]),
-            references=row[col_index.references].split(),
+            references=row[col_index.references].replace(',',' ').split(),
         )
         bom_rows.append(bom_row)
 
