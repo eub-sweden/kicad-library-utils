@@ -59,8 +59,8 @@ def extract_bom_rows(sheet: Worksheet, first_data_row=2) -> [BomRow]:
     bom_rows = []
     for row in sheet.iter_rows(min_row=first_data_row, values_only=True):
         bom_row = BomRow(
-            manufacturer=str(row[col_index.manufacturer] or ''),
-            part_number=str(row[col_index.part_number] or ''),
+            manufacturer=str(row[col_index.manufacturer] or '').strip(),
+            part_number=str(row[col_index.part_number] or '').strip(),
             quantity=int(row[col_index.quantity]),
             references=row[col_index.references].replace(',',' ').split(),
         )
@@ -80,7 +80,7 @@ def find_bom_row_changes(old_bom: [BomRow], new_bom: [BomRow]) -> ([BomRow], ([B
                 continue
 
             if new_row.manufacturer != old_row.manufacturer:
-                logging.warning("Manufacturer changed, can cause buggy output?")
+                logging.warning("Manufacturer changed for \"%s\" from \"%s\" to \"%s\")", new_row.part_number, new_row.manufacturer, old_row.manufacturer)
                 continue
 
             if new_row.references != old_row.references:
