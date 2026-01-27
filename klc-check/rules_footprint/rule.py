@@ -43,7 +43,6 @@ def getEndPoint(graph: Dict[str, Any]):
 def graphItemString(
     graph: Dict[str, Any], layer: bool = False, width: bool = False
 ) -> str:
-
     layerText = ""
     shapeText = ""
     widthText = ""
@@ -91,7 +90,6 @@ class KLCRule(KLCRuleBase):
     """
 
     def __init__(self, module: KicadMod, args):
-
         super().__init__()
 
         self.module: KicadMod = module
@@ -114,10 +112,12 @@ class KLCRule(KLCRuleBase):
         # A set of rules not to check can be added by adding a user-defined text field
         # of the following format:
         # klc-exceptions=F1.3,F9.2
-        klc_exceptions = [ke['user'] for ke in module.userText if 'klc-exceptions=' in ke['user']]
-        if klc_exceptions:
-            klc_exceptions = klc_exceptions[0].replace('klc-exceptions=', '')
-            klc_exceptions = klc_exceptions.replace(' ', '')
-            klc_exceptions = klc_exceptions.split(',')
 
-        return klc_exceptions
+        klc_exceptions = module.getProperty("klc-exceptions")
+        if klc_exceptions:
+            klc_exceptions = klc_exceptions["klc-exceptions"]
+            klc_exceptions = klc_exceptions.replace(" ", "")
+            klc_exceptions = klc_exceptions.split(",")
+
+            return klc_exceptions
+        return []
