@@ -160,7 +160,7 @@ def diff_bom(old_path: pathlib.Path, new_path: pathlib.Path):
         if added_refs:
             change_refs += [f"+{ref}" for ref in added_refs]
 
-        change_refs_str = " ".join(change_refs)
+        change_refs_str = " ".join(sorted(change_refs))
         quantity_change = new_row.quantity - old_row.quantity
         changed_rows.append((old_row, change_refs_str, quantity_change))
 
